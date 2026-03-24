@@ -1,0 +1,31 @@
+{
+  "name": "dynamic-workers-orchestrator",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "vite dev",
+    "build": "vite build && wrangler deploy",
+    "deploy": "vite build && wrangler deploy",
+    "types": "wrangler types env.d.ts --include-runtime false"
+  },
+  "dependencies": {
+    "@cloudflare/kumo": "^1.15.0",
+    "@cloudflare/worker-bundler": "^0.0.4",
+    "@phosphor-icons/react": "^2.1.10"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.30.0",
+    "@cloudflare/workers-types": "^4.20260317.1",
+    "@tailwindcss/vite": "^4",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.8.2",
+    "vite": "^8.0.1",
+    "wrangler": "^4.76.0"
+  }
+}

@@ -1,0 +1,20 @@
+@import "@cloudflare/kumo/styles/standalone";
+
+html, body, #root {
+  min-height: 100vh;
+}
+
+[data-highlighted] {
+  background: var(--color-kumo-fill) !important;
+  cursor: pointer;
+}
+
+html {
+  color-scheme: light;
+  background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 60%, #e0f2fe 100%);
+}
+
+html[data-mode="dark"] {
+  color-scheme: dark;
+  background: linear-gradient(135deg, #0f172a 0%, #0c1a2e 60%, #0f2040 100%);
+}
