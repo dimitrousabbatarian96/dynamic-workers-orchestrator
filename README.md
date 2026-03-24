@@ -27,10 +27,9 @@ pnpm install
 
 ### 1. Run the Orchestrator
 ```bash
-cd workers/orchestrator
-pnpm start
+pnpm dev
 ```
-This will start the Orchestrator dev server locally (usually `http://localhost:5174`).
+This will start the Orchestrator dev server locally via Wrangler (usually `http://localhost:8787`).
 
 ### 2. Deploy a Worker dynamically
 
@@ -57,6 +56,6 @@ deploy-worker
 ### 3. Test execution
 Hit the newly deployed worker through the orchestrator's path routing:
 ```bash
-curl http://localhost:5174/sample-worker/test-route
+curl http://localhost:8787/sample-worker/test-route
 ```
 You should see: `[sample-worker] Hello! You requested path: /test-route`
