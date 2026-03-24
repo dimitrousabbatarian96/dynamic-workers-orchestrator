@@ -1,0 +1,1 @@
+run `deploy-worker` in a cloudflare worker directory to deploy it to the orchestrator

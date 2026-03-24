@@ -3,3 +3,4 @@ node_modules/
 .DS_Store
 dist/
 worker-configuration.d.ts
+.agents

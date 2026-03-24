@@ -1,80 +1,62 @@
-# Dynamic Workers Playground
+# Dynamic Workers Orchestrator
 
-This is a playground for executing Dynamic Workers.
+This project is a PNPM monorepo for orchestrating Cloudflare Dynamic Workers. It provides a platform where you can deploy your own TS/JS Cloudflare Workers to a central orchestrator. The orchestrator dynamically bundles and runs them inside its own isolate, caching the compilation in KV, and routing HTTP traffic to them via path prefixes.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/dinasaur404/dynamic-workers-playground)
+## Architecture
 
-You can use it to:
+The monorepo contains the following packages:
 
-- write or import worker code
-- bundle it at runtime with [`@cloudflare/worker-bundler`](https://www.npmjs.com/package/@cloudflare/worker-bundler)
-- run it through a dynamic worker loader
-- see real-time responses, logs, timing, and bundle details
-
-> **Note:** This playground will allow users to excute arbitrary Worker code once it's deployed. Before sharing the URL publicly, we recommend protecting it with [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/) to restrict access to trusted users. Alternatively, test it locally first with `npm start` before deploying.
-
-## What it demonstrates
-
-**Server-side**
-- Runtime bundling with `@cloudflare/worker-bundler` — resolves npm deps and bundles source files inside a Worker
-- Dynamic execution via a `worker_loaders` binding, with automatic caching when source hasn't changed
-- Log capture pipeline — a Tail Worker (`DynamicWorkerTail`) forwards `console.*` output from dynamically loaded workers to a Durable Object (`LogSession`), streamed back to the caller in real time
-- Execution timing — granular build/load/run breakdown with cold vs. warm start detection
-
-**Client-side**
-- Tabbed file editor with Tab-key indentation support
-- Load built-in example workers or import any public GitHub repo
-- Bundle/minify toggles passed through to `worker-bundler`
-- Real-time output: response body, console logs, timing, and bundle info
-
-## Running
-
-```bash
-npm install
-npm start
-```
-
-Open [http://localhost:5173](http://localhost:5173).
-
-To deploy:
-
-```bash
-npm run deploy
-```
+- **`workers/orchestrator`**: The core Cloudflare Worker that dynamically compiles, caches, and executes other workers on the fly.
+- **`packages/cli`**: A command-line tool `deploy-worker` to instantly package and deploy a worker directory to the orchestrator.
+- **`workers/sample-worker`**: A simple test worker to demonstrate deployment via the CLI.
 
 ## How it works
 
-When you click **Run Worker**, the host Worker receives your source files and calls `createWorker()` from `@cloudflare/worker-bundler` to bundle them at runtime:
+1. You create a new worker (like `sample-worker`).
+2. You run the CLI `deploy-worker` script in your worker's directory.
+3. The CLI POSTs your raw files to the orchestrator (`/api/deploy/:workerName`).
+4. The orchestrator compiles the files using `@cloudflare/worker-bundler`, caches the result in a `WORKER_FILES` KV namespace, and returns success.
+5. Setup instances routing: Invocations to `/:workerName/*` on the orchestrator are intercepted, the `/:workerName` prefix is stripped, and the request is routed dynamically to the deployed worker using Cloudflare's `env.LOADER.get()`.
 
-```ts
-const { mainModule, modules } = await createWorker({
-  files: normalizedFiles,
-  bundle: true,
-  minify: false,
-});
+## Getting Started
 
-const worker = env.LOADER.get(workerId, async () => ({
-  mainModule,
-  modules,
-  tails: [contextExports.DynamicWorkerTail({ props: { workerId } })],
-}));
-
-const response = await worker.getEntrypoint().fetch(request);
+First, install dependencies from the root:
+```bash
+pnpm install
 ```
 
-Console logs from the dynamic worker are captured by `DynamicWorkerTail` (a Tail Worker) and routed through a `LogSession` Durable Object back to the HTTP response.
-
-## Project structure
-
+### 1. Run the Orchestrator
+```bash
+cd workers/orchestrator
+pnpm start
 ```
-src/
-  server.ts    Host worker — API routes (/api/run, /api/github)
-  github.ts    GitHub import helper
-  logging.ts   Tail Worker + Durable Object logging pipeline
-  client.tsx   React frontend
-  styles.css   Tailwind + Kumo styles
+This will start the Orchestrator dev server locally (usually `http://localhost:5174`).
+
+### 2. Deploy a Worker dynamically
+
+#### Using the Workspace (Locally)
+In a new terminal, run the CLI deployment from the sample worker directory (it is already linked thanks to `pnpm` workspaces):
+
+```bash
+cd workers/sample-worker
+pnpm run deploy
 ```
 
-## Related examples
+#### Using `npm link` (Globally)
+If you want to use the `deploy-worker` command in any directory on your computer (outside this monorepo):
 
-- [cloudflare/agents — playground](https://github.com/cloudflare/agents/tree/main/examples/playground) — full Agents SDK kitchen-sink demo (also uses `worker_loaders`)
+```bash
+cd packages/cli
+pnpm link --global # or npm link
+```
+Now you can go to any folder containing a `package.json` and Cloudflare worker files, and simply type:
+```bash
+deploy-worker
+```
+
+### 3. Test execution
+Hit the newly deployed worker through the orchestrator's path routing:
+```bash
+curl http://localhost:5174/sample-worker/test-route
+```
+You should see: `[sample-worker] Hello! You requested path: /test-route`

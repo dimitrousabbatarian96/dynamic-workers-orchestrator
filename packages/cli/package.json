@@ -1,0 +1,8 @@
+{
+  "name": "@dynamic-workers/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "deploy-worker": "./bin/deploy.js"
+  }
+}
